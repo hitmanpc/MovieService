@@ -5,7 +5,6 @@ using Service.Entities.Movies;
 
 namespace MovieService
 {
-    //[ServiceBehavior(IncludeExceptionDetailInFaults = false)]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class MovieService : IMovieService
     {
@@ -26,7 +25,7 @@ namespace MovieService
         
         public Configuration GetConfiguration()
         {
-            //_apiKey = ApiKey;
+            
             var address = baseAddress + "configuration" + APIKEY;
             var uri = new Uri(address);
             

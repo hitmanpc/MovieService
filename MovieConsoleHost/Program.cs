@@ -8,19 +8,13 @@ namespace MovieConsole
         {
             var host = new MovieServiceHost();
 
-            //var hostTask = new Task(host.CreateHostInstance);
+            
             while (true)
             {
                 Console.WriteLine("Press CTRL+C at anytime to stop");
                 host.CreateHostInstance();
             }
             
-
-
-
-            //hostTask.Start();
-            //hostTask.Wait();
-
         }
     }
 }
