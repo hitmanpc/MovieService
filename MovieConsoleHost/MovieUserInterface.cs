@@ -6,15 +6,16 @@ namespace MovieConsole
     {
         public void RunInterface()
         {
-            do
+            Console.WriteLine("Enter in the API Key: ");
+            var apikey = Console.ReadLine();
+
+            while (true)
             {
                 try
                 {
 
-                    Console.WriteLine("Enter in the API Key: ");
-                    var apikey = Console.ReadLine();
-
-                    var movieService = new MovieService.MovieService(apikey);
+                    var movieService = new MovieService.MovieService();
+                    movieService.SetApiKey(apikey);
                     var datasent = movieService.GetConfiguration();
 
                     Console.WriteLine("data sent to service " + apikey + " data returned ");
@@ -30,15 +31,16 @@ namespace MovieConsole
                         Console.WriteLine("Original Title: " + result.original_title + "\n");
 
                     }
-                    
+
                 }
                 catch (Exception exception)
                 {
 
                     Console.WriteLine(exception.Message);
+                    break;
                 }
-            } while (Console.ReadKey().Key !=ConsoleKey.Q);
 
+            }
         }
     }
 }

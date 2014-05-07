@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using Service.Entities.Configuration;
 using Service.Entities.Movies;
 
@@ -13,6 +12,9 @@ namespace MovieService
 
         [OperationContract]
         MovieSearch SearchMovies(string movieQuery);
+
+        [OperationContract]
+        void SetApiKey(string apiKey);
     }
 
 }

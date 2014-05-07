@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Service.Entities.Movies;
+using Moq;
+using MovieService;
+using Service.Entities.Configuration;
 
 namespace MovieServiceTests
 {
@@ -9,41 +11,72 @@ namespace MovieServiceTests
     public class MovieServiceTest
     {
         [TestMethod]
-        [ExpectedException(typeof(System.ServiceModel.FaultException))]
-        public void Movie_Service_Throws_APIKEY_Not_Provided()
+        [ExpectedException(typeof(ArgumentException))]
+        public void Movie_Search_Throws_APIKEY_Not_Provided()
         {
-            var movieServie = new MovieService.MovieService(null);
+            var wcfMock = new Mock<IMovieService>();
+            wcfMock.SetupSet<string>(meth => meth.SearchMovies("data")).Throws<ArgumentException>();
+            var SearchValue = wcfMock.Object;
 
+            var SearchReturns = SearchValue.SearchMovies("data");
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Set_APIKEY_Throw_Exception_when_NullorEmpty()
+        {
+            var wcfMock = new Mock<IMovieService>();
+            wcfMock.Setup(meth => meth.SetApiKey(null)).Throws<ArgumentNullException>();
+
+            var setApiValue = wcfMock.Object;
+
+            wcfMock.Object.SetApiKey(null);
+        }
+
+        [TestMethod]
+        public void Set_ApiKey_Method()
+        {
+            var wcfMock = new Mock<IMovieService>();
+            wcfMock.Setup(meth => meth.SetApiKey(It.IsAny<string>()));
+
+            
+            wcfMock.Object.SetApiKey("data");
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Configuration_Throws_exception_When_ApiKey_NullOrEmpty()
+        {
+            var wcfMock = new Mock<IMovieService>();
+            wcfMock.Setup(meth => meth.GetConfiguration()).Throws<ArgumentNullException>();
+
+            var configValue = wcfMock.Object;
+
+            var configReturns = configValue.GetConfiguration();
         }
 
         [TestMethod]
         [ExpectedException(typeof(System.ServiceModel.FaultException))]
         public void Configuration_Throws_Exception_On_Invalid_APIKEY()
         {
-            var movieServie = new MovieService.MovieService("12983471naslkas812l");
-
+            var movieServie = new MovieService.MovieService();
             var dataset = movieServie.GetConfiguration();
+
         }
 
+        
         [TestMethod]
-        [ExpectedException(typeof(System.ServiceModel.FaultException))]
-        public void Movie_Search_Throws_FaultException()
+        public void Mock_WCF_Service()
         {
-            var movieServie = new MovieService.MovieService("12983471naslkas812l");
+            var wcfMock = new Mock<IMovieService>();
 
-            var dataset = movieServie.SearchMovies("Cool");
-        }
+            var configObject = new Mock<Configuration>();
 
-        [TestMethod]
-        public void HttpClientRequest_Type_Compare_Is_Equal()
-        {
-            var clientRequest = new MovieService.HttpClientRequest<MovieSearch>();
-
-            var dataReturned = clientRequest.GetRequest(new Uri(
-                "http://api.themoviedb.org/3/search/keyword?api_key=60d380e21b9fd186dd18f2d5104beb08&query=Club"));
-
-             
-             Assert.AreEqual(typeof(MovieSearch).Name, dataReturned.GetType().Name);
+            var called = false;
+            wcfMock.Setup(meth => meth.GetConfiguration()).Callback(() => called = true);
+            IMovieService value = wcfMock.Object;
+            value.GetConfiguration();
+            Assert.IsTrue(called == true);
         }
     }
 }
