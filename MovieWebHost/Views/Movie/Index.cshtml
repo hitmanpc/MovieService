@@ -1,7 +1,48 @@
-﻿
+﻿@using System.Web.Optimization
+@model MovieWebHost.Models.MovieSearchModel
 @{
     ViewBag.Title = "Index";
 }
 
 
 <h2>Index</h2>
+
+@using (Ajax.BeginForm("SearchMovies", new AjaxOptions
+                                      {
+                                          HttpMethod = "Post",
+                                          UpdateTargetId = "SearchResults"
+                                      }))
+{
+    <div class="">
+        @Html.Label("Search By Title: ")
+        @Html.TextBox(" MovieQuery", null, new { data_autocomplete = Url.Action("AutoCompleteTitle") })
+    </div>
+}
+
+@section scripts
+{
+    
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            //testing for data-autocomplete attribute
+            $("#MovieQuery").each(function() {
+                var target = $(this);
+                var providerName = target.val();
+                //var data = { multple variables along with a function(request, response) needed below in autocomplete }
+                debugger;
+                target.autocomplete(
+                {
+                    source: target.attr("data-autocomplete"),
+                    minLength: 2,
+                    messages: {
+                        noResult: '',
+                        results: function() {}
+                    },
+                    appendTo: null
+                });
+            });
+        });
+    </script>
+}
